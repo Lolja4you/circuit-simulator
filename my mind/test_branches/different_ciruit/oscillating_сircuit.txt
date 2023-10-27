@@ -1,0 +1,21 @@
+components_dict ={
+    1 : {'node_pk': 1, 
+         'viewed': False, 
+         'x': 10, 'y': 10, 
+         'name': 'E1', 
+         'amplitude': 10.0, 
+         'ac': True, 
+         'dc': False, 
+         'parallel': False,
+         'frequency': 60},
+    2 : {'node_pk': 2, 'viewed': False, 'x': 10, 'y': 10, 'name': 'R2', 'parallel': False, 'resistance': 1000.0},
+    3 : {'node_pk': 3, 'viewed': False, 'x': 10, 'y': 10, 'name': 'C3', 'parallel': False, 'capacitance': 0.001},
+    4 : {'node_pk': 4, 'viewed': False, 'x': 10, 'y': 10, 'name': 'L4', 'parallel': False, 'inductance': 0.01},
+}
+
+connection_dict ={
+    1 : [2],
+    2 : [3],
+    3 : [4],
+    4 : [1],
+}
