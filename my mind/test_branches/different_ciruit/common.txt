@@ -34,3 +34,30 @@ components_dict ={
 
 for i in components_dict:
     print(components_dict[i]['name'], components_dict[i]['parallel'], components_dict[i]['viewed'])
+
+
+
+    # data_grad = f"""
+    #     info:
+    #     angle derees {angle} - rad {angle_rad}
+    #     x1: {x1} - y1: {y1}
+    #     x2: {x2} - y2: {y2}
+    #     new_x1: {new_x1} - new_y1: {new_y1}
+    #     new_x2: {new_x2} - new_y2: {new_y2}
+
+    #     delta:
+    #     x: {abs(x2-x1)}
+    #     y: {abs(y2-y1)}
+    #     new_x: {abs(new_x1-new_x2)}
+    #     new_y: {abs(new_y1-new_y2)}
+
+    #     common lenght
+    #     initial length: {lenght}
+    #     lenght: {round(math.sqrt((x1-new_x2)**2+(y1-new_y2)**2),0)}
+    #             """
+    # print(data_grad)
+
+
+        # lenght_x = round((x2-x1), 0)
+    # lenght_y = round((y2-y1), 0)
+    # lenght = round(math.sqrt(lenght_x**2+lenght_y**2), 0)
