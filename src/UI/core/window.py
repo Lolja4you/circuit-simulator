@@ -1,5 +1,6 @@
 import tkinter as tk
 from src.UI.core.tool_frame import ToolFrame
+from .UI_core_components_processing import components_drawer
 
 class Window(tk.Tk):
     def __init__(self):
@@ -28,10 +29,10 @@ class Window(tk.Tk):
         cursor position
         '''
         self.cursor_position_label = tk.Label(self, textvariable=self.cursor_position_x)
-        self.cursor_position_label.place(x=10, y=self.y-100)
+        self.cursor_position_label.place(x=10, y=self.y-120)
 
         self.cursor_position_label2 = tk.Label(self, textvariable=self.cursor_position_y)
-        self.cursor_position_label2.place(x=10, y=self.y-80)
+        self.cursor_position_label2.place(x=10, y=self.y-100)
 
         '''
         tool frame
@@ -53,7 +54,13 @@ class Window(tk.Tk):
         self.draw_subsquare(wrapped=False)
         self.draw_visible_area()
         self.draw_visible_area(wrapped=True)
-
+        
+        '''
+        initial drawing components
+        '''
+        self.node = components_drawer(self.canvas)
+        for components in self.node:
+            components.draw()
     def draw_visible_area(self, wrapped=False):
         for x in range(int(self.x_offset / self.quadrant_size), int((self.x_offset + self.workspace_width) / self.quadrant_size) + 1):
             for y in range(int(self.y_offset / self.quadrant_size), int((self.y_offset + self.workspace_height) / self.quadrant_size) + 1):
@@ -74,11 +81,21 @@ class Window(tk.Tk):
                 self.canvas.create_rectangle(x1, y1, x2, y2, outline="#888888") #cfcfcf
 
     def move_canvas(self, event):
+        dx, dy = 0, 0
+
         match event.keysym:
-            case 'Up': self.y_offset -= self.cam_velocity
-            case 'Down':self.y_offset += self.cam_velocity
-            case 'Left':self.x_offset -= self.cam_velocity
-            case 'Right':self.x_offset += self.cam_velocity
+            case 'Up': 
+                self.y_offset -= self.cam_velocity
+                dy = self.cam_velocity
+            case 'Down':
+                self.y_offset += self.cam_velocity
+                dy = -self.cam_velocity
+            case 'Left':
+                self.x_offset -= self.cam_velocity
+                dx = self.cam_velocity
+            case 'Right':
+                self.x_offset += self.cam_velocity
+                dx = -self.cam_velocity
 
         self.canvas.delete("all")
         self.draw_subsquare()
@@ -87,6 +104,9 @@ class Window(tk.Tk):
         self.draw_visible_area(wrapped=True)
 
         self.update_cursor_position(event)
+
+        for components in self.node:
+            components.move(dx, dy)
 
     def start_drag(self, event):
         self.last_x = event.x
@@ -101,11 +121,16 @@ class Window(tk.Tk):
 
         self.canvas.delete("all")
         self.draw_subsquare()
+        self.draw_subsquare(wrapped=True)
         self.draw_visible_area()
+        self.draw_visible_area(wrapped=True)
 
         self.last_x = event.x
         self.last_y = event.y
-        print(self.x_offset, self.y_offset)
+
+        for components in self.node:
+            components.move(dx, dy)
+
 
     def update_cursor_position(self, event):
         self.cursor_position_x.set(f"X: {event.x+self.x_offset}")
