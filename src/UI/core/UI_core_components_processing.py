@@ -13,7 +13,8 @@ components_dict ={
     10 : {'type': 'wire', 'x': 347, 'y':224, 'length': 100, 'angle': 15, 'color':'white'},
     11 : {'type': 'node', 'x': 600, 'y':700, 'length': 100, 'angle': 30, 'color':'red'},
     12 : {'type': 'node', 'x': 600, 'y':700, 'length': 0, 'angle': 0, 'color':'white'},
-    13 : {'type': 'resistor', 'x': 500, 'y':500, 'length': 100, 'angle': 30, 'color':'white'},
+    13 : {'type': 'resistor', 'x': 650, 'y':200, 'length': 100, 'angle': 0, 'color':'white'},
+    15 : {'type': 'resistor', 'x': 720, 'y':550, 'length': 100, 'angle': 90, 'color':'white'},
 
 }
 
