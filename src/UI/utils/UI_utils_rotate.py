@@ -24,3 +24,15 @@ def spin_rotation(x1, y1, x2, y2, angle, length=0):
     y2 = y2 + length * math.sin(angle_rad)
 
     return x1,y1,x2,y2
+
+
+def find_angle(x1, y1, x2, y2):
+    dx = x2 - x1
+    dy = y2 - y1
+    angle = math.atan2(dy, dx)
+    return math.degrees(angle)
+
+
+def find_length(x1,y1,x2,y2):
+    length = math.sqrt((x1-x2)**2+(y1-y2)**2)
+    return length

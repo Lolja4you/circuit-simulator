@@ -1,1 +1,61 @@
-{"components": {"1": {"node_pk": 1, "viewed": false, "x": 10, "y": 10, "name": "E1", "amplitude": 10.0, "ac": true, "dc": false, "frequency": 60}, "2": {"node_pk": 2, "viewed": false, "x": 10, "y": 10, "name": "R2", "resistance": 10.0}, "3": {"node_pk": 3, "viewed": false, "x": 10, "y": 10, "name": "C3", "capacitance": 10.0}, "4": {"node_pk": 4, "viewed": false, "x": 10, "y": 10, "name": "L4", "inductance": 10.0}}, "connections": {"1": [2], "2": [3], "3": [4], "4": [1]}}
+{
+    "components": {
+        "1": {
+            "node_pk": 1, 
+            "viewed": false, 
+            "x": 800, "y": 800, 
+            "length": 100, 
+            "angle": 0, 
+            "color": "white", 
+            "type": "resistor", 
+            "name": "R1", 
+            "resistance": 1000.0,
+            "parallel": false
+        }, 
+        "2": {
+            "node_pk": 2, 
+            "viewed": false, 
+            "x": 500, "y": 500, 
+            "length": 100, 
+            "angle": 90, 
+            "color": "white", 
+            "name": "C2", 
+            "capacitance": 1e-3,
+            "parallel": false,
+            "type": "capacitor" 
+        }, 
+        "3": {
+            "node_pk": 3, 
+            "viewed": false, 
+            "x": 10, "y": 10, 
+            "length": 100, 
+            "angle": 45, 
+            "color": "white", 
+            "name": "L3", 
+            "inductance": 0.05,
+            "parallel": false,
+            "type": "inductor"
+        }, 
+        "4": {
+            "node_pk": 4, 
+            "viewed": false, 
+            "x": 400, "y": 400, 
+            "length": 40, 
+            "angle": 0, 
+            "color": "white", 
+            "name": "E4", 
+            "amplitude": 10.0, 
+            "ac": false, 
+            "dc": true, 
+            "frequency": 60,
+            "parallel": false,
+            "type": "source"
+        }
+    }, 
+    "connections": {
+        "4": [1], 
+        "1": [2], 
+        "2": [3], 
+        "3": [4]
+    }
+}

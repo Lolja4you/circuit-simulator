@@ -1,16 +1,19 @@
 import tkinter as tk
 
 from src.UI.core.icon import *
+from ..screens.table import Table
+from ..screens.vector_diagram import VectorDiagram
+from ..screens.propertys import Propertys
 
 class ToolFrame(tk.Frame):
-    def __init__(self, parent, width):
+    def __init__(self, parent, width, circuit_init):
         self.parent = parent 
         super().__init__(parent, borderwidth=2, relief="solid", width=width * 0.50, height=50, background='#484848')
         self.create_tool_icons()
         self.tool_buttons = {}
         for tool, icon in self.tool_icons.items():
             button = tk.Button(self, text=tool, 
-                                command=lambda t=tool: self.select_tool(t),
+                                command=lambda t=tool: self.select_tool(t, circuit_init),
                                 fg='silver', 
                                 font=('Arial', 12), 
                                 bg='#484848',
@@ -24,14 +27,28 @@ class ToolFrame(tk.Frame):
 
     def create_tool_icons(self):
         self.tool_icons = {
-            "source": draw_source_icon(self.parent.canvas),
-            "node": draw_node_icon(self.parent.canvas),
-            "resistor": draw_resistor_icon(self.parent.canvas),
-            "capacitor": draw_capacitor_icon(self.parent.canvas),
-            "inductor": draw_inductor_icon(self.parent.canvas),
-            "voltmeter": draw_voltmeter_icon(self.parent.canvas),
-            "ammeter": draw_ammeter_icon(self.parent.canvas)
+            "сформировать отчет": draw_ammeter_icon(self.parent.canvas),
+            "софрмировать векторную диаграмму" : draw_ammeter_icon(self.parent.canvas),
+            "софрмировать таблицу свойств компонентов" : draw_ammeter_icon(self.parent.canvas),
         }
 
-    def select_tool(self, tool):
+    def select_tool(self, tool, circuit_init):
         print(f"Selected tool: {tool}")
+        if tool == "сформировать отчет":  # Проверьте, выбран ли инструмент "сформировать отчет"
+            self.start_table_window(circuit_init)
+        elif tool ==  "софрмировать векторную диаграмму":
+            self.start_vector_window(circuit_init)
+        elif tool ==  "софрмировать таблицу свойств компонентов":
+            self.start_propertys_window(circuit_init)
+
+    def start_table_window(self, circuit_init):
+        table = Table(circuit_init)
+        table.mainloop()
+
+    def start_vector_window(self, circuit_init):
+        vector = VectorDiagram(circuit_init)
+        vector.mainloop()
+
+    def start_propertys_window(self, circuit_init):
+        propertys = Propertys(circuit_init)
+        propertys.mainloop()

@@ -1,11 +1,17 @@
 import tkinter as tk
+import logging
+
 from src.UI.core.tool_frame import ToolFrame
 from .UI_core_components_processing import components_drawer
+from ..handlers.UI_handlers_click import handle_click
+
 
 class Window(tk.Tk):
-    def __init__(self):
+    def __init__(self, circuit_init):
         super().__init__()
         
+        self.envirometn = circuit_init 
+
         self.x = self.winfo_screenwidth()
         self.y = self.winfo_screenheight()
         self.title("test_1 - САПР")
@@ -37,7 +43,7 @@ class Window(tk.Tk):
         '''
         tool frame
         '''
-        self.tool_frame = ToolFrame(self, self.x)
+        self.tool_frame = ToolFrame(self, self.x, circuit_init)
         self.tool_frame.place(x=self.x - (self.x*1) + 10, y=10)
 
         self.canvas.focus_set()
@@ -58,9 +64,13 @@ class Window(tk.Tk):
         '''
         initial drawing components
         '''
-        self.node = components_drawer(self.canvas)
+        self.node = components_drawer(self.canvas, components_dict=self.envirometn.components_matrix_incidence)
         for components in self.node:
             components.draw()
+        # Привязка обработчика события к холсту (canvas)
+        self.canvas.bind("<Button-1>", lambda event: handle_click(event, self.node))
+        self.canvas.bind("<B1-Motion>", self.handle_drag_press_button_1)
+
     def draw_visible_area(self, wrapped=False):
         for x in range(int(self.x_offset / self.quadrant_size), int((self.x_offset + self.workspace_width) / self.quadrant_size) + 1):
             for y in range(int(self.y_offset / self.quadrant_size), int((self.y_offset + self.workspace_height) / self.quadrant_size) + 1):
@@ -135,3 +145,17 @@ class Window(tk.Tk):
     def update_cursor_position(self, event):
         self.cursor_position_x.set(f"X: {event.x+self.x_offset}")
         self.cursor_position_y.set(f"Y: {event.y+self.y_offset}")
+
+    def handle_drag_press_button_1(self, event):
+        self.canvas.delete('all') 
+
+        self.draw_subsquare()
+        self.draw_subsquare(wrapped=True)
+        self.draw_visible_area()
+        self.draw_visible_area(wrapped=True)
+        
+        for component in self.node:
+            if component.selected:
+                component.drag(event.x, event.y)
+            component.draw()
+        

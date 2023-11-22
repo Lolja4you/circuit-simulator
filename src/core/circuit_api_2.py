@@ -48,6 +48,8 @@ class Circuit:
         self.current_dict = {}
         self.current_voltage_dict = {}
 
+        self.result: list
+
     def show_circuit(self) -> str:
         for key, items in self.components_matrix_incidence.items():
             print(f'{key} : {items}')
@@ -66,3 +68,4 @@ class Circuit:
     def is_closed(self) -> bool:
         """ recursive function """
         ...
+    
