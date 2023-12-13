@@ -1,14 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
 
+from src.utils import check_result
+
+
 class Propertys(tk.Tk):
     def __init__(self, circuit_init):
         super().__init__()
+        
         self.circuit_init = circuit_init
+        check_result.is_result(circuit_init)
+
         self.x = self.winfo_screenwidth()
         self.y = self.winfo_screenheight()
         self.title("test_1 - property table") 
         self.configure(bg='#030B15')
+
 
         width = int(round(self.x/1.5, 0))
         height = int(round(self.y/1.1, 0))

@@ -1,13 +1,21 @@
+import math
 import tkinter as tk
 from tkinter import ttk
-import math
+
 from ..core.UI_core_draw_components import DrawWire
+
+from src.utils import check_result
+
 from src.UI.utils.UI_utils_rotate import find_angle
+
 
 class VectorDiagram(tk.Tk):
     def __init__(self, circuit_init):
         super().__init__()
+
         self.circuit_init = circuit_init
+        self.is_init = check_result.is_result(circuit_init)
+
         self.x = self.winfo_screenwidth()
         self.y = self.winfo_screenheight()
         self.title("test_1 - vectors diagram")
@@ -43,34 +51,92 @@ class VectorDiagram(tk.Tk):
         x2.draw()
         y2 = DrawWire(self.canvas, 400, 400, color='white', length=75, angle=-90, is_node_1=False, is_node_2=False, is_arrow=False)
         y2.draw()
-        queue = circuit_init.result.copy()
-        def draw_vector(queue):
-            for component in queue:
+
+        self.queue = circuit_init.result.copy()
+        def draw_vector():
+            for component in self.queue:
                 try:
-                    if component[0] == 'R1':
+                    if 'R' in component[0]:
                         self.resistor = DrawWire(self.canvas, x.x1, y.y1, color='red', length=component[1]*10, angle=0, is_node_1=False, is_node_2=False, is_arrow=True)
                         self.resistor.draw()
-                    elif component[0] == 'C2':
-                        self.capacitor = DrawWire(self.canvas, self.induction.x2-5, self.induction.y2, color='green', length=component[1]*1000, angle=-90, is_node_1=False, is_node_2=False, is_arrow=True)
-                        self.capacitor.draw()
-                    elif component[0] == 'L3':
-                        self.induction = DrawWire(self.canvas, self.resistor.x2, self.resistor.y2, color='blue', length=component[1]*1000, angle=90, is_node_1=False, is_node_2=False, is_arrow=True)
-                        self.induction.draw()
-                    elif component[0] == 'E4':
-                        length = math.sqrt((x.x1-self.capacitor.x2+5)**2+(y.y1-self.capacitor.y2)**2)
-                        self.voltage = DrawWire(self.canvas, 400, 400, color='yellow', length=length, angle=-1*find_angle(400, 400, self.capacitor.x2, self.capacitor.y2), is_node_1=False, is_node_2=False, is_arrow=True)
-                        self.voltage.draw()
-                    queue.remove(component)
-                    print(queue)
-                except UnboundLocalError:...
+                        # Вывод численного значения над линией
+                        self.canvas.create_text(
+                            (self.resistor.x1+self.resistor.x2)/2, 
+                            y.y1-10, 
+                            text=f"{round(component[1], 3)}",
+                            anchor='s',
+                            font=("Arial", 10), 
+                            fill='white', 
+                        )
+                        self.queue.remove(component)
+                    elif 'L' in component[0]:
+                        try:
+                            self.induction = DrawWire(self.canvas, self.resistor.x2, self.resistor.y2, color='blue', length=component[1]*1000, angle=90, is_node_1=False, is_node_2=False, is_arrow=True)
+                            self.induction.draw()
+                            # Вывод численного значения над линией
+                            self.canvas.create_text(
+                                self.resistor.x2-10, 
+                                (self.induction.y1+self.induction.y2)/2,
+                                text=f"{round(component[1], 3)}",
+                                anchor='s',
+                                font=("Arial", 10), 
+                                fill='white', 
+                                angle = 90,
+                            )
+                            self.queue.remove(component)
+                        except AttributeError:
+                            self.queue.remove(component)
+                            self.queue.append(component)
+                    elif 'C' in component[0]:
+                        try:
+                            self.capacitor = DrawWire(self.canvas, self.induction.x2-5, self.induction.y2, color='green', length=component[1]*1000, angle=-90, is_node_1=False, is_node_2=False, is_arrow=True)
+                            self.capacitor.draw()
+                            # Вывод численного значения над линией
+                            self.canvas.create_text(
+                                self.induction.x2-5, 
+                                self.induction.y2-10, 
+                                text=str(round(component[1], 3)), 
+                                anchor='s',
+                                font=("Arial", 10), 
+                                fill='white', 
+                            )
+                            self.queue.remove(component)
+                        except AttributeError:
+                            self.queue.remove(component)
+                            self.queue.append(component)
+                    elif 'E' in component[0]:
+                        try:
+                            length = math.sqrt((x.x1-self.capacitor.x2+5)**2+(y.y1-self.capacitor.y2)**2)
+                            self.voltage = DrawWire(self.canvas, 400, 400, color='yellow', length=abs(length), angle=-1*find_angle(400, 400, self.capacitor.x2, self.capacitor.y2), is_node_1=False, is_node_2=False, is_arrow=True)
+                            self.voltage.draw()
+                            # Вывод численного значения над линией
+                            self.canvas.create_text(
+                                (self.voltage.x1+self.voltage.x2)/2-10,
+                                (self.voltage.y1+self.voltage.y2)/2-10,
+                                text=str(abs(round(component[1], 3))), 
+                                anchor='s',
+                                font=("Arial", 10), 
+                                fill='white', 
+                                angle = self.voltage.angle
+                            )
+                            self.queue.remove(component)
+                        except AttributeError:
+                            self.queue.remove(component)
+                            self.queue.append(component)
+
+                    print(self.queue)
+                except UnboundLocalError:
+                    ...
+
+        # Добавляем компоненты в очередь перед запуском цикла
         while True:
-            if len(queue) !=0:
-                draw_vector(queue)
+            if len(self.queue) != 0:
+                draw_vector()
             else:
                 break
         # Axis labels
-        self.canvas.create_text(x.x1 + 30, x.y1 + 20, text="X-Axis", fill="white", font=("Arial", 12))
-        self.canvas.create_text(y.x1 - 25, y.y1 - 30, text="Y-Axis", fill="white", font=("Arial", 12))
+        self.canvas.create_text(x.x2 - 50, x.y1 + 20, text="X-Axis (Voltage)", fill="white", font=("Arial", 12))
+        self.canvas.create_text(y.x1 - 25, y.y2 + 50, text="Y-Axis (Voltage)", fill="white", font=("Arial", 12), angle=90)
 
         # Легенда
         legend = ttk.Label(self, text="Legend", background='#030B15', foreground='white', font=("Arial", 12))
@@ -88,8 +154,6 @@ class VectorDiagram(tk.Tk):
         voltage_legend = ttk.Label(self, text="Voltage", background='#030B15', foreground='yellow', font=("Arial", 10))
         voltage_legend.place(x=20, y=100)
 
-        self.canvas.create_text(x.x1 + 30, x.y1 + 20, text="X-Axis", fill="white", font=("Arial", 12))
-        self.canvas.create_text(y.x1 - 25, y.y1 - 30, text="Y-Axis", fill="white", font=("Arial", 12))
         self.canvas.create_text(390, 410, text="0", fill="white", font=("Arial", 12))
         self.canvas.create_text(scale_x.x1+abs(scale_x.x1-scale_x.x2)/2, scale_x.y1 - 10, text="10px", fill="white", font=("Arial", 10))
         self.canvas.create_text(scale_y.x1-10, scale_y.y1-abs(scale_y.y1-scale_y.y2)/2, text="1000px", fill="white", font=("Arial", 10), angle=90)

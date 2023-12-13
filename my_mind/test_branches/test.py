@@ -1,6 +1,7 @@
 import numpy as np
-import tkinter as tk
-import math
+from itertools import chain
+
+
 from prettytable import PrettyTable
 
 # from main import circuit_init
@@ -8,11 +9,12 @@ from prettytable import PrettyTable
 
 def calc(circuit_init):
     components_dict = circuit_init.components_matrix_incidence
-    connection_dict = circuit_init.components_matrix_adjacency
+    connection_dict = circuit_init.adjacency_dict
 
     components_dict = {int(key): value for key, value in components_dict.items()}   
     connection_dict = {int(key): value for key, value in connection_dict.items()}
-    print(components_dict)
+    # print(components_dict)
+    # print(circuit_init.__dict__)
     # components_dict ={
     #     1 : {'node_pk': 1, 
     #          'viewed': False, 
@@ -46,113 +48,117 @@ def calc(circuit_init):
     frequnce, amplitude = get_frequncy(components_dict)
 
     # print(connection_dict)
-    parallel = []
+    # parallel = []
     voltage_matrix = []
-    def dfs(graph, start_node, visited, traversal, loops):
-        visited[start_node] = True
-        traversal.append(start_node)
-        if len(connection_dict[start_node]) > 1:
-            components_dict[start_node]['parallel'] = True
-            for i in connection_dict[start_node]:
-                parallel.append(i)
-        else:
-            for i in connection_dict[start_node]:
-                parallel.append(i)
+    # def dfs(graph, start_node, visited, traversal, loops):
+    #     visited[start_node] = True
+    #     traversal.append(start_node)
+    #     if len(connection_dict[start_node]) > 1:
+    #         components_dict[start_node]['parallel'] = True
+    #         for i in connection_dict[start_node]:
+    #             parallel.append(i)
+    #     else:
+    #         for i in connection_dict[start_node]:
+    #             parallel.append(i)
         
-        dup = [x for i, x in enumerate(parallel) if i != parallel.index(x)]
-        for i in dup:
-            components_dict[i]['parallel'] = True
+    #     dup = [x for i, x in enumerate(parallel) if i != parallel.index(x)]
+    #     for i in dup:
+    #         components_dict[i]['parallel'] = True
 
-        for neighbor in graph[start_node]:
-            if not visited[neighbor]:
-                dfs(graph, neighbor, visited, traversal, loops)
-            elif neighbor in traversal[:-1]:
-                loop = traversal[traversal.index(neighbor):]
-                loops.append(loop)
+    #     for neighbor in graph[start_node]:
+    #         if not visited[neighbor]:
+    #             dfs(graph, neighbor, visited, traversal, loops)
+    #         elif neighbor in traversal[:-1]:
+    #             loop = traversal[traversal.index(neighbor):]
+    #             loops.append(loop)
         
     # Создаем граф в виде словаря смежности
 
     # Инициализируем список посещенных вершин, список для сохранения обхода и список для сохранения контуров
-    visited = {node: False for node in connection_dict}
-    traversal = []
-    loops = []
-    branches = []
+    # visited = {node: False for node in connection_dict}
+    # traversal = []
+    
+    loop = []
+    for key, item in connection_dict.items():
+        if not key  in loop: loop.append(key)
+
+        for i in item:
+            if not i in loop: loop.append(i)
+    print(loop, connection_dict) #можно сразу закинуть сюда петлю
+    loops=loop
+    # branches = []
     # Вызываем функцию обхода графа в глубину
-    dfs(connection_dict, 1, visited, traversal, loops)
+    # dfs(connection_dict, 1, visited, traversal, loops)
 
-    # Выводим обход графа и контуры на экран
-    print("Обход графа:", traversal)
-    print("Контуры без учета источников напряжений:", loops)
+    # # Выводим обход графа и контуры на экран
+    # print("Обход графа:", traversal)
+    # print("Контуры без учета источников напряжений:", loops)
 
 
-    ####################
-    ####################
-    ####################
+    # ####################
+    # ####################
+    # ####################
 
-    def created_branch(graph, start_node, branches, branch=[]):
-        # traversal.append(start_node)
-        if not components_dict[start_node]['parallel']:
-            element = start_node
-            branch.append(element)
-        else:
-            branch = [start_node]
-            branches.append(branch)
-        for neighbor in graph[start_node]:
-            if not components_dict[neighbor]['viewed']:
-                components_dict[neighbor]['viewed'] = True
-                created_branch(graph, neighbor, branches, branch)
-    ####################
+    # def created_branch(graph, start_node, branches, branch=[]):
+    #     # traversal.append(start_node)
+    #     if not components_dict[start_node]['parallel']:
+    #         element = start_node
+    #         branch.append(element)
+    #     else:
+    #         branch = [start_node]
+    #         branches.append(branch)
+    #     for neighbor in graph[start_node]:
+    #         if not components_dict[neighbor]['viewed']:
+    #             components_dict[neighbor]['viewed'] = True
+    #             created_branch(graph, neighbor, branches, branch)
+    # ####################
 
-    branch = []
-    traversal = []
-    branches = []
-    created_branch(connection_dict, 1, branches)
-    print('br', branches)
+    # branch = []
+    # traversal = []
+    # branches = []
+    # created_branch(connection_dict, 1, branches)
+    # print('br', branches)
 
     ####################
     ####################
     ####################
 
     # Создаем массив точек для каждого контура
-    def create_voltage_matrix():
-        for loop_points in loops:
-            voltage = False
-            for point in loop_points:
-                if 'E' in components_dict[point]['name']:
-                    voltage_matrix.append(components_dict[point]['amplitude'])
-                    loop_points.remove(point)
-                    voltage = True
-            if not voltage:
-                point = 0
-                voltage_matrix.append(point)
-            else:... 
-        print('матрица напряжений = матрице контуров: ', voltage_matrix, '=', loops)
 
-    create_voltage_matrix()
+    voltage = False
+    for point in loops:
+        if 'E' in components_dict[point]['name']:
+            voltage_matrix.append(components_dict[point]['amplitude'])
+            loops.remove(point)
+            voltage = True
+    if not voltage:
+        point = 0
+        voltage_matrix.append(point)
+    else:... 
+    print('матрица напряжений = матрице контуров: ', voltage_matrix, '=', loops)
+
+
 
 
     # Вычисляем общий ток для каждого контура
-    def calculated_resistant(
-        common_resistance = 0,
-        lol = []
-    ):
-        for loop_points in loops:
-            for point in loop_points:
-                if 'resistance' in components_dict[point]:
-                    resistance = components_dict[point]['resistance']
-                elif 'capacitance' in components_dict[point]:
-                    resistance = -1 / (2 * 3.14159265359 * frequnce * components_dict[point]['capacitance'])
-                elif 'inductance' in components_dict[point]:
-                    resistance = (2 * 3.14159265359 * frequnce * components_dict[point]['inductance'])
-                common_resistance += resistance
-                lol.append(point)
-            
-            loops[loops.index(loop_points)] = [common_resistance]
-            common_resistance = 0
-            # print(lol)
-        # dup = [x for i, x in enumerate(lol) if i != lol.index(x)]
-        # print(dup)
-    calculated_resistant()
+    lol = []
+    common_resistance = 0
+
+    for point in loops:
+        if 'resistance' in components_dict[point]:
+            resistance = components_dict[point]['resistance']
+        elif 'capacitance' in components_dict[point]:
+            resistance = -1 / (2 * 3.14159265359 * frequnce * components_dict[point]['capacitance'])
+        elif 'inductance' in components_dict[point]:
+            resistance = (2 * 3.14159265359 * frequnce * components_dict[point]['inductance'])
+        common_resistance += resistance
+        lol.append(point)
+    
+    loops = [[common_resistance]]
+        # print(lol)
+    # dup = [x for i, x in enumerate(lol) if i != lol.index(x)]
+    # print(dup)
+
     print(loops, voltage_matrix) 
 
 
@@ -162,6 +168,7 @@ def calc(circuit_init):
     x = np.linalg.solve(A, b)
 
     print(x)
+    volt = 0
     table = PrettyTable(['name', 'voltage(V)', 'voltage drop(V)', 'current(A)', 'power(W)'])
     voltage_list = []
     for voltage in components_dict:
@@ -180,10 +187,10 @@ def calc(circuit_init):
             volt = amplitude
 
         if "E" in name: 
-            voltage_list.append((name, components_dict[voltage]['amplitude'], 0, x[0], components_dict[voltage]['amplitude']*x[0]))
+            voltage_list.append((name, abs(components_dict[voltage]['amplitude']), 0, abs(x[0]), abs(components_dict[voltage]['amplitude']*x[0])))
             table.add_row([name,  components_dict[voltage]['amplitude'], 0, x[0],  components_dict[voltage]['amplitude']*x[0]])
         else: 
-            voltage_list.append((name, volt, abs(amplitude-volt), x[0], power))
+            voltage_list.append((name, abs(volt), abs(amplitude-volt), abs(x[0]), abs(power)))
             table.add_row([name, volt, abs(amplitude-volt), x[0], power])
 
     print('name   voltage(V) current(A)')
@@ -194,3 +201,4 @@ def calc(circuit_init):
 
 
     circuit_init.result = voltage_list
+

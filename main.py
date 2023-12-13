@@ -60,7 +60,7 @@ def user_choose():
 
 
         case "start": 
-            test.calc(circuit_init)
+            # test.calc(circuit_init)
             UI.init_UI(circuit_init)
         case "save" : save.save_circuit(circuit_init)
         case "open" : save.open_circuit(str(input("имя файла: ")), circuit_init)

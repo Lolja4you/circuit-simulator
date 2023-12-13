@@ -39,14 +39,12 @@ class Circuit:
                 6   : [2, 3, 4, 5]\n
             }
         """
-        self.current_contour = []
+        self.resistor_count:    dict = {}
+        self.capacitor_count:   dict = {}
+        self.inductor_count:    dict = {}
+        self.source_count:      dict = {}
 
-        self.resistance_dict = {}
-        self.capacitor_dict = {}
-        self.transistor_dict = {}
-        self.key_dict = {}
-        self.current_dict = {}
-        self.current_voltage_dict = {}
+        self.is_changed = False
 
         self.result: list
 

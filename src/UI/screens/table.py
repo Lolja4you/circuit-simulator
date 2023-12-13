@@ -1,11 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
 
+from src.utils import check_result
+
 
 class Table(tk.Tk):
     def __init__(self, circuit_init):
         super().__init__()
+        
         self.circuit_init = circuit_init
+        self.is_init = check_result.is_result(circuit_init)
+
         self.x = self.winfo_screenwidth()
         self.y = self.winfo_screenheight()
         self.title("test_1 - table") 
@@ -31,7 +36,7 @@ class Table(tk.Tk):
         
         # Добавляем кортежи в таблицу
         tuples = self.circuit_init.result
-        print(tuples)
+        
         for i, row in enumerate(tuples):
             self.tree.insert("", i, text=f"{i+1}", values=row)
         

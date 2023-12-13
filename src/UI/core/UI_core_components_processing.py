@@ -27,7 +27,8 @@ from .UI_core_draw_components import DrawNode, DrawResisrtor, DrawWire, DrawCapa
 # }
 
 
-def components_drawer(canvas, components_dict):
+def components_drawer(canvas, ciruit):
+    components_dict = ciruit.components_matrix_incidence
     components = []
     for component in components_dict:
         try:
@@ -51,33 +52,35 @@ def components_drawer(canvas, components_dict):
             components.append(DrawWire(canvas, x=x, y=y, length=length, angle=angle, color=color))
 
         elif 'resistor' in component_type:
+            print(component)
             x = components_dict[component]['x']
             y = components_dict[component]['y']
             length = components_dict[component]['length']
             angle = components_dict[component]['angle']
             color = components_dict[component]['color']
-            components.append(DrawResisrtor(canvas, x=x, y=y, length=length, angle=angle, color=color))
+            components.append(DrawResisrtor(canvas, x=x, y=y, pk=int(component), length=length, angle=angle, color=color, ciruit=ciruit))
+
         elif 'capacitor' in component_type:
             x = components_dict[component]['x']
             y = components_dict[component]['y']
             length = components_dict[component]['length']
             angle = components_dict[component]['angle']
             color = components_dict[component]['color']
-            components.append(DrawCapacitor(canvas, x=x, y=y, length=length, angle=angle, color=color))
+            components.append(DrawCapacitor(canvas, x=x, y=y, pk=int(component), length=length, angle=angle, color=color, ciruit=ciruit))
         elif 'source' in component_type:
             x = components_dict[component]['x']
             y = components_dict[component]['y']
             length = components_dict[component]['length']
             angle = components_dict[component]['angle'] 
             color = components_dict[component]['color']
-            components.append(DrawSource(canvas, x=x, y=y, length=length, angle=angle, color=color))
+            components.append(DrawSource(canvas, x=x, y=y, pk=int(component), length=length, angle=angle, color=color, ciruit=ciruit))
         elif 'inductor' in component_type:
             x = components_dict[component]['x']
             y = components_dict[component]['y']
             length = components_dict[component]['length']
             angle = components_dict[component]['angle'] 
             color = components_dict[component]['color']
-            components.append(DrawInductor(canvas, x=x, y=y, length=length, angle=angle, color=color))
+            components.append(DrawInductor(canvas, x=x, y=y, pk=int(component), length=length, angle=angle, color=color, ciruit=ciruit))
         elif 'unkown' in component_type: continue
     
 
